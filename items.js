@@ -8,10 +8,10 @@ itemsRouter.use(express.json());
 itemsRouter.use(cors());
 
 // API
-// GET ALL items
+// GET ALL ITEMS
 itemsRouter.get("/", (req, res) => {
   pool
-    .query("SELECT * FROM items ORDER BY createdAt DESC;")
+    .query("SELECT * FROM items ORDER BY createdat DESC;")
     .then((data) => {
       console.log(data);
       res.status(200).json(data.rows);
@@ -19,7 +19,7 @@ itemsRouter.get("/", (req, res) => {
     .catch((e) => res.status(500).json({ message: e.message }));
 });
 
-// GET A SPECIFIC Item WITH ID
+// GET A SPECIFIC ITEM WITH ID
 itemsRouter.get("/:id", (req, res) => {
   const id = req.params.id;
   pool
@@ -36,11 +36,12 @@ itemsRouter.get("/:id", (req, res) => {
 
 // CREATE NEW ITEM
 itemsRouter.post("/", (req, res) => {
-  const { title, category, description, imageurl, size, color } = req.body; // form data from body
+  const { title, category, description, imageurl, size, color, price } =
+    req.body; // form data from body
   pool
     .query(
-      "INSERT INTO items (title, category, description, imageurl, size, color, createdAt) VALUES ($1,$2,$3,$4,$5,$6,NOW()) RETURNING id;",
-      [title, category, description, imageurl, size, color]
+      "INSERT INTO items (title, category, description, imageurl, size, color, price, createdat) VALUES ($1,$2,$3,$4,$5,$6,$7,NOW()) RETURNING id;",
+      [title, category, description, imageurl, size, color, price]
     )
     .then((data) => {
       console.log(data);
@@ -52,11 +53,12 @@ itemsRouter.post("/", (req, res) => {
 // UPDATE ITEM
 itemsRouter.put("/:id", (req, res) => {
   const id = req.params.id;
-  const { title, category, description, imageurl, size, color } = req.body; // form data from body
+  const { title, category, description, imageurl, size, color, price } =
+    req.body; // form data from body
   pool
     .query(
-      "UPDATE items SET title=$1,category=$2,description=$3,imageurl=$4,size=$5,color=$6 WHERE id=$7 RETURNING *;",
-      [title, category, description, imageurl, size, color, id]
+      "UPDATE items SET title=$1, category=$2, description=$3, imageurl=$4, size=$5, color=$6, price=$7 WHERE id=$8 RETURNING *;",
+      [title, category, description, imageurl, size, color, price, id]
     )
     .then((data) => {
       console.log(data);
